@@ -8,11 +8,28 @@ let result = null;
 let action = NOTHING;
 let score = 0; // total reward this flight
 
+// AI mode: practice in the background, show the AI's current best flying on screen.
+const PRACTICE_PER_FRAME = 20; // practice flights per screen frame (~60 frames a second)
+let aiFlying = false;
+let practiceFlights = 0;
+let recentLandings = []; // true/false for the last 100 practice flights
+let pauseFrames = 0;     // short pause after each AI flight so you can see how it ended
+
+const aiButton = document.getElementById('ai');
+aiButton.onclick = () => {
+  aiFlying = !aiFlying;
+  aiButton.textContent = aiFlying ? 'Let me fly' : 'Let the AI learn';
+  aiButton.blur(); // so the arrow keys go to the game, not the button
+  restart();
+};
+
+function restart() { rocket = newRocket(); result = null; score = 0; pauseFrames = 0; }
+
 // Remember which keys are held down.
 const keys = {};
 addEventListener('keydown', e => {
   keys[e.key] = true;
-  if (e.key === 'r') { rocket = newRocket(); result = null; score = 0; }
+  if (e.key === 'r') restart();
   if (e.key.startsWith('Arrow')) e.preventDefault(); // stop the page scrolling
 });
 addEventListener('keyup', e => { keys[e.key] = false; });
@@ -65,19 +82,36 @@ function draw() {
   ctx.fillStyle = '#ccc';
   ctx.fillText(`score ${score.toFixed(1)}`, WIDTH - 170, 40);
 
+  if (aiFlying) {
+    const rate = recentLandings.filter(Boolean).length / Math.max(1, recentLandings.length);
+    ctx.font = '14px monospace';
+    ctx.fillStyle = '#fff';
+    ctx.fillText(`AI practice flights: ${practiceFlights} · landed ${Math.round(rate * 100)}% of last 100`, 10, HEIGHT - 10);
+  }
+
   if (result) {
     ctx.font = '28px sans-serif';
     ctx.fillStyle = result === 'landed' ? '#3c3' : '#e33';
     ctx.fillText(result === 'landed' ? 'Landed!' : 'Crashed!', WIDTH / 2 - 55, 150);
-    ctx.font = '14px sans-serif';
-    ctx.fillText('press R to fly again', WIDTH / 2 - 62, 175);
+    if (!aiFlying) {
+      ctx.font = '14px sans-serif';
+      ctx.fillText('press R to fly again', WIDTH / 2 - 62, 175);
+    }
   }
 }
 
 // The game loop: about 60 times a second, apply the physics, then draw.
 function loop() {
+  if (aiFlying) {
+    for (let i = 0; i < PRACTICE_PER_FRAME; i++) {
+      recentLandings.push(runEpisode().result === 'landed');
+      if (recentLandings.length > 100) recentLandings.shift();
+      practiceFlights++;
+    }
+    if (result && ++pauseFrames > 60) restart();
+  }
   if (!result) {
-    action = actionFromKeys();
+    action = aiFlying ? bestAction(situation(rocket)) : actionFromKeys();
     let reward;
     ({ rocket, result, reward } = step(rocket, action));
     score += reward;
