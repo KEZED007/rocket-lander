@@ -58,6 +58,3 @@ function step(rocket, action) {
   if (result === 'crashed') reward += CRASH_PENALTY;
   return { rocket: { x, y, vx, vy, angle, fuel }, result, reward };
 }
-
-// Lets test.js load this file in Node. Browsers ignore it.
-if (typeof module !== 'undefined') module.exports = { step, newRocket, GROUND, NOTHING, ENGINE, TURN_LEFT, TURN_RIGHT };

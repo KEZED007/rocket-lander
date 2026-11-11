@@ -1,6 +1,8 @@
-// Quick checks that the physics behaves. Run with: node test.js
+// Quick checks that the physics and the AI behave. Run with: node test.js
 const assert = require('assert');
-const { step, GROUND, NOTHING, ENGINE } = require('./physics.js');
+const fs = require('fs'), vm = require('vm');
+// Load the files like the browser does: as plain scripts sharing one world.
+for (const f of ['physics.js', 'agent.js']) vm.runInThisContext(fs.readFileSync(`${__dirname}/${f}`, 'utf8'));
 
 // Doing nothing: gravity pulls the rocket down.
 let r = step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0 }, NOTHING).rocket;
@@ -31,3 +33,21 @@ assert.equal(step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0, fuel: 10 }, ENGINE).
 assert.equal(step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0, fuel: 10 }, NOTHING).reward, 0);
 
 console.log('All physics tests passed.');
+
+// Buckets: which slot a number falls into.
+assert.equal(bucket(-5, [-1, 0, 1]), 0);
+assert.equal(bucket(0.5, [-1, 0, 1]), 2);
+assert.equal(bucket(9, [-1, 0, 1]), 3);
+
+// Learning rule: a guess of 0 moves 10% of the way toward a final reward of 10.
+learn('test', ENGINE, 10, 'test', true);
+assert.equal(qTable.test[ENGINE], 1);
+
+// The AI really learns: after 100,000 practice flights it should land sometimes.
+for (let i = 0; i < 100000; i++) runEpisode(true);
+let landed = 0;
+for (let i = 0; i < 500; i++) if (runEpisode(false).result === 'landed') landed++;
+console.log(`AI landed ${landed / 5}% of test flights after training.`);
+assert(landed > 75, 'AI should land more than 15% of the time after training');
+
+console.log('All AI tests passed.');
