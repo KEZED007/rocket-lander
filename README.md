@@ -13,8 +13,10 @@ Click **Let the AI learn** and watch it go from crashing every time to landing a
 Or run it on your own computer:
 
 ```bash
-python3 -m http.server 8000
+python3 -m http.server 8000 --bind 127.0.0.1
 ```
+
+(`--bind 127.0.0.1` keeps the server visible only to your own computer, not to everyone on your Wi‑Fi.)
 
 Then open http://localhost:8000.
 
