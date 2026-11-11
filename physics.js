@@ -1,17 +1,17 @@
 // The rules of the rocket world. No drawing here, just numbers in, numbers out.
 
 // --- Knobs to experiment with ---
-const GRAVITY = 0.05;     // how hard the ground pulls the rocket down, every frame
-const THRUST = 0.12;      // how hard the main engine pushes
-const TURN_SPEED = 0.05;  // how fast the rocket rotates (radians per frame)
-const SAFE_SPEED = 1.5;   // fastest touchdown that still counts as a landing
-const SAFE_ANGLE = 0.3;   // most tilt that still counts as upright (0.3 rad ≈ 17°)
-const FUEL_START = 150;   // frames of engine burn in a full tank
+let GRAVITY = 0.05;     // how hard the ground pulls the rocket down, every frame
+let THRUST = 0.12;      // how hard the main engine pushes
+let TURN_SPEED = 0.05;  // how fast the rocket rotates (radians per frame)
+let SAFE_SPEED = 1.5;   // fastest touchdown that still counts as a landing
+let SAFE_ANGLE = 0.3;   // most tilt that still counts as upright (0.3 rad ≈ 17°)
+let FUEL_START = 150;   // frames of engine burn in a full tank
 
 // --- Rewards: the score the AI will try to make as big as possible ---
-const LAND_REWARD = 100;    // touched down safely on the pad
-const CRASH_PENALTY = -100; // hit too hard, off the pad, tilted, or flew away
-const FUEL_COST = -0.3;     // every frame the engine burns
+let LAND_REWARD = 100;    // touched down safely on the pad
+let CRASH_PENALTY = -100; // hit too hard, off the pad, tilted, or flew away
+let FUEL_COST = -0.3;     // every frame the engine burns
 
 // --- The world's size (in pixels). y grows DOWNWARD, like on a screen. ---
 const WIDTH = 600, HEIGHT = 400, GROUND = 370;

@@ -7,6 +7,9 @@
   <style>
     body { background: #05070f; color: #ccc; font-family: sans-serif; text-align: center; margin: 16px; }
     canvas { max-width: 100%; border: 1px solid #333; }
+    #settings { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 6px 20px; max-width: 600px; margin: 0 auto 12px; text-align: left; }
+    #settings label { display: grid; grid-template-columns: 9.5em 1fr 3em; align-items: center; gap: 8px; font-size: 14px; }
+    #settings output { font-family: monospace; text-align: right; }
   </style>
 </head>
 <body>
@@ -16,9 +19,17 @@
   <canvas id="world" width="600" height="400"></canvas>
   <br>
   <canvas id="chart" width="600" height="220" aria-label="Learning curve: average score per 1,000 practice flights"></canvas>
+  <h2>Settings</h2>
+  <div id="settings"></div>
+  <p>
+    <label>Rocket colour <input type="color" id="rocketColor" value="#dddddd"></label>
+    <button id="defaults">Defaults</button>
+    <button id="resetAI">Reset AI</button>
+  </p>
   <script src="physics.js"></script>
   <script src="agent.js"></script>
   <script src="chart.js"></script>
+  <script src="settings.js"></script>
   <script src="game.js"></script>
 </body>
 </html>

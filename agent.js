@@ -4,7 +4,7 @@
 
 const LEARNING_RATE = 0.1;  // how far each guess moves toward what really happened
 const DISCOUNT = 0.99;      // how much the future counts (1 = as much as now)
-const EXPLORE = 0.1;        // chance of trying a random action instead of the best one
+let EXPLORE = 0.1;        // chance of trying a random action instead of the best one
 
 const qTable = {}; // situation name -> [guess for NOTHING, ENGINE, TURN_LEFT, TURN_RIGHT]
 

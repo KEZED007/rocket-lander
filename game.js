@@ -60,7 +60,7 @@ function draw() {
     ctx.fillStyle = '#f80';
     ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(5, 0); ctx.lineTo(0, 14 + Math.random() * 6); ctx.fill();
   }
-  ctx.fillStyle = result === 'crashed' ? '#e33' : '#ddd';
+  ctx.fillStyle = result === 'crashed' ? '#e33' : document.getElementById('rocketColor').value;
   ctx.beginPath(); ctx.moveTo(0, -30); ctx.lineTo(8, 0); ctx.lineTo(-8, 0); ctx.fill();
   ctx.restore();
 
@@ -78,7 +78,7 @@ function draw() {
   ctx.strokeStyle = '#ccc';
   ctx.strokeRect(WIDTH - 130, 9, 120, 12);
   ctx.fillStyle = rocket.fuel > FUEL_START * 0.2 ? '#fc3' : '#e33';
-  ctx.fillRect(WIDTH - 130, 9, 120 * rocket.fuel / FUEL_START, 12);
+  ctx.fillRect(WIDTH - 130, 9, 120 * Math.min(1, rocket.fuel / FUEL_START), 12); // min: tank may shrink mid-flight
   ctx.fillStyle = '#ccc';
   ctx.fillText(`score ${score.toFixed(1)}`, WIDTH - 170, 40);
 
