@@ -38,7 +38,7 @@ function draw() {
   ctx.save();
   ctx.translate(rocket.x, rocket.y);
   ctx.rotate(rocket.angle);
-  if (action === ENGINE && !result) {
+  if (action === ENGINE && rocket.fuel > 0 && !result) {
     ctx.fillStyle = '#f80';
     ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(5, 0); ctx.lineTo(0, 14 + Math.random() * 6); ctx.fill();
   }
@@ -53,6 +53,14 @@ function draw() {
   ctx.fillText(`speed ${speed.toFixed(2)} (safe ≤ ${SAFE_SPEED})`, 10, 20);
   ctx.fillStyle = Math.abs(rocket.angle) <= SAFE_ANGLE ? '#3c3' : '#e33';
   ctx.fillText(`tilt  ${rocket.angle.toFixed(2)} (safe ≤ ±${SAFE_ANGLE})`, 10, 40);
+
+  // fuel gauge: a bar that shrinks as you burn
+  ctx.fillStyle = '#ccc';
+  ctx.fillText('fuel', WIDTH - 170, 20);
+  ctx.strokeStyle = '#ccc';
+  ctx.strokeRect(WIDTH - 130, 9, 120, 12);
+  ctx.fillStyle = rocket.fuel > FUEL_START * 0.2 ? '#fc3' : '#e33';
+  ctx.fillRect(WIDTH - 130, 9, 120 * rocket.fuel / FUEL_START, 12);
 
   if (result) {
     ctx.font = '28px sans-serif';

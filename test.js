@@ -7,8 +7,13 @@ let r = step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0 }, NOTHING).rocket;
 assert(r.y > 100, 'gravity should pull the rocket down');
 
 // Engine while upright: rocket gets pushed up.
-r = step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0 }, ENGINE).rocket;
+r = step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0, fuel: 10 }, ENGINE).rocket;
 assert(r.vy < 0, 'engine should push the rocket up');
+assert.equal(r.fuel, 9, 'engine should burn 1 fuel');
+
+// Empty tank: engine does nothing, gravity wins.
+r = step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0, fuel: 0 }, ENGINE).rocket;
+assert(r.vy > 0, 'no fuel means no thrust');
 
 // Slow, upright, on the pad: landed.
 assert.equal(step({ x: 300, y: GROUND - 0.5, vx: 0, vy: 0.5, angle: 0 }, NOTHING).result, 'landed');
