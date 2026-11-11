@@ -8,7 +8,7 @@ Click **Let the AI learn** and watch it go from crashing every time to landing a
 
 ## Try it
 
-**Live demo:** _link added after publishing_
+**Live demo: https://kezed007.github.io/rocket-lander/** (opens in your browser, nothing to install)
 
 Or run it on your own computer:
 
