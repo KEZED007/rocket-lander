@@ -104,7 +104,9 @@ function draw() {
 function loop() {
   if (aiFlying) {
     for (let i = 0; i < PRACTICE_PER_FRAME; i++) {
-      recentLandings.push(runEpisode().result === 'landed');
+      const flight = runEpisode();
+      recordFlight(flight.score, flight.result === 'landed');
+      recentLandings.push(flight.result === 'landed');
       if (recentLandings.length > 100) recentLandings.shift();
       practiceFlights++;
     }
@@ -117,6 +119,7 @@ function loop() {
     score += reward;
   }
   draw();
+  drawChart();
   requestAnimationFrame(loop);
 }
 loop();
