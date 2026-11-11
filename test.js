@@ -24,4 +24,10 @@ assert.equal(step({ x: 300, y: GROUND - 1, vx: 0, vy: 5, angle: 0 }, NOTHING).re
 // Gentle but off the pad: crashed.
 assert.equal(step({ x: 50, y: GROUND - 0.5, vx: 0, vy: 0.5, angle: 0 }, NOTHING).result, 'crashed');
 
+// Rewards: +100 landing, -100 crash, small cost for burning fuel.
+assert.equal(step({ x: 300, y: GROUND - 0.5, vx: 0, vy: 0.5, angle: 0, fuel: 0 }, NOTHING).reward, 100);
+assert.equal(step({ x: 300, y: GROUND - 1, vx: 0, vy: 5, angle: 0, fuel: 0 }, NOTHING).reward, -100);
+assert.equal(step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0, fuel: 10 }, ENGINE).reward, -0.3);
+assert.equal(step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0, fuel: 10 }, NOTHING).reward, 0);
+
 console.log('All physics tests passed.');

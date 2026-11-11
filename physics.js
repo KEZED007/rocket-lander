@@ -8,6 +8,11 @@ const SAFE_SPEED = 1.5;   // fastest touchdown that still counts as a landing
 const SAFE_ANGLE = 0.3;   // most tilt that still counts as upright (0.3 rad ≈ 17°)
 const FUEL_START = 150;   // frames of engine burn in a full tank
 
+// --- Rewards: the score the AI will try to make as big as possible ---
+const LAND_REWARD = 100;    // touched down safely on the pad
+const CRASH_PENALTY = -100; // hit too hard, off the pad, tilted, or flew away
+const FUEL_COST = -0.3;     // every frame the engine burns
+
 // --- The world's size (in pixels). y grows DOWNWARD, like on a screen. ---
 const WIDTH = 600, HEIGHT = 400, GROUND = 370;
 const PAD_LEFT = 250, PAD_RIGHT = 350;
@@ -21,9 +26,10 @@ function newRocket() {
 }
 
 // One tick of time: rocket now + action -> rocket next frame, and whether it's over.
-// result is null (still flying), 'landed' or 'crashed'.
+// result is null (still flying), 'landed' or 'crashed'. reward is this frame's score.
 function step(rocket, action) {
   let { x, y, vx, vy, angle, fuel } = rocket;
+  let reward = 0;
 
   if (action === TURN_LEFT) angle -= TURN_SPEED;
   if (action === TURN_RIGHT) angle += TURN_SPEED;
@@ -32,6 +38,7 @@ function step(rocket, action) {
     vx += Math.sin(angle) * THRUST;
     vy -= Math.cos(angle) * THRUST;
     fuel -= 1;
+    reward += FUEL_COST;
   }
   vy += GRAVITY;
   x += vx;
@@ -47,7 +54,9 @@ function step(rocket, action) {
   } else if (x < 0 || x > WIDTH || y < -100) {
     result = 'crashed'; // flew off the screen
   }
-  return { rocket: { x, y, vx, vy, angle, fuel }, result };
+  if (result === 'landed') reward += LAND_REWARD;
+  if (result === 'crashed') reward += CRASH_PENALTY;
+  return { rocket: { x, y, vx, vy, angle, fuel }, result, reward };
 }
 
 // Lets test.js load this file in Node. Browsers ignore it.

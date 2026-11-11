@@ -6,12 +6,13 @@ const ctx = canvas.getContext('2d');
 let rocket = newRocket();
 let result = null;
 let action = NOTHING;
+let score = 0; // total reward this flight
 
 // Remember which keys are held down.
 const keys = {};
 addEventListener('keydown', e => {
   keys[e.key] = true;
-  if (e.key === 'r') { rocket = newRocket(); result = null; }
+  if (e.key === 'r') { rocket = newRocket(); result = null; score = 0; }
   if (e.key.startsWith('Arrow')) e.preventDefault(); // stop the page scrolling
 });
 addEventListener('keyup', e => { keys[e.key] = false; });
@@ -61,6 +62,8 @@ function draw() {
   ctx.strokeRect(WIDTH - 130, 9, 120, 12);
   ctx.fillStyle = rocket.fuel > FUEL_START * 0.2 ? '#fc3' : '#e33';
   ctx.fillRect(WIDTH - 130, 9, 120 * rocket.fuel / FUEL_START, 12);
+  ctx.fillStyle = '#ccc';
+  ctx.fillText(`score ${score.toFixed(1)}`, WIDTH - 170, 40);
 
   if (result) {
     ctx.font = '28px sans-serif';
@@ -75,7 +78,9 @@ function draw() {
 function loop() {
   if (!result) {
     action = actionFromKeys();
-    ({ rocket, result } = step(rocket, action));
+    let reward;
+    ({ rocket, result, reward } = step(rocket, action));
+    score += reward;
   }
   draw();
   requestAnimationFrame(loop);
