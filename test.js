@@ -47,6 +47,15 @@ assert.equal(bucket(-5, [-1, 0, 1]), 0);
 assert.equal(bucket(0.5, [-1, 0, 1]), 2);
 assert.equal(bucket(9, [-1, 0, 1]), 3);
 
+// The AI's eyes: no block, a near block to dodge left, a far block to dodge right.
+const kept = obstacles.splice(0, obstacles.length);
+assert.equal(blockBelow({ x: 300, y: 100 }), 0, 'nothing below');
+obstacles.push({ x: 280, y: 120, w: 100, h: 18 });
+assert.equal(blockBelow({ x: 300, y: 100 }), 1, 'near, left of centre: dodge left');
+assert.equal(blockBelow({ x: 360, y: 10 }), 6, 'far, right of centre: dodge right');
+assert.equal(blockBelow({ x: 200, y: 100 }), 0, 'block is off to the side');
+obstacles.splice(0, obstacles.length, ...kept);
+
 // Learning rule: a guess of 0 moves 10% of the way toward a final reward of 10.
 learn('test', ENGINE, 10, 'test', true);
 assert.equal(qTable.test[ENGINE], 1);

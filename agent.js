@@ -15,7 +15,21 @@ function bucket(value, edges) {
   return i;
 }
 
-// Round the rocket's exact numbers into a short situation name like "3,1,2,4,2".
+// The AI's "eyes": is there a block under the rocket? 0 = clear path down.
+// Otherwise 1-3 = how close (near, medium, far), plus 3 if dodging right is shorter.
+// It describes the block relative to the rocket, so it still works after you drag a block.
+function blockBelow(r) {
+  let nearest = null;
+  for (const o of obstacles) {
+    const underUs = r.x > o.x - 12 && r.x < o.x + o.w + 12 && o.y + o.h > r.y - 30; // 12 px margin: the rocket is 16 wide
+    if (underUs && (!nearest || o.y < nearest.y)) nearest = o;
+  }
+  if (!nearest) return 0;
+  const dodgeRight = r.x > nearest.x + nearest.w / 2;
+  return 1 + bucket(nearest.y - r.y, [30, 90]) + (dodgeRight ? 3 : 0);
+}
+
+// Round the rocket's exact numbers into a short situation name like "3,1,2,4,2,1,0".
 function situation(r) {
   return [
     bucket(r.x - (PAD_LEFT + PAD_RIGHT) / 2, [-100, -40, -15, 15, 40, 100]), // left/right of pad
@@ -24,6 +38,7 @@ function situation(r) {
     bucket(r.vy, [-1, 0, 0.7, 1.3, 2.5, 4]),                                  // falling speed
     bucket(r.angle, [-0.3, -0.1, 0.1, 0.3]),                                  // tilt
     r.fuel > 0 ? 1 : 0,                                                       // any fuel left?
+    blockBelow(r),                                                            // block in the way?
   ].join(',');
 }
 
