@@ -32,6 +32,14 @@ assert.equal(step({ x: 300, y: GROUND - 1, vx: 0, vy: 5, angle: 0, fuel: 0 }, NO
 assert.equal(step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0, fuel: 10 }, ENGINE).reward, -0.3);
 assert.equal(step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0, fuel: 10 }, NOTHING).reward, 0);
 
+// Obstacles: feet or nose touching a block is a crash, missing it is fine.
+const saved = obstacles.splice(0, obstacles.length, { x: 100, y: 200, w: 50, h: 20 });
+assert.equal(step({ x: 120, y: 199.5, vx: 0, vy: 1, angle: 0, fuel: 0 }, NOTHING).result, 'crashed', 'feet hit the top');
+assert.equal(step({ x: 120, y: 252, vx: 0, vy: -3, angle: 0, fuel: 0 }, NOTHING).result, 'crashed', 'nose hit the bottom');
+assert.equal(step({ x: 170, y: 199.5, vx: 0, vy: 1, angle: 0, fuel: 0 }, NOTHING).result, null, 'beside the block is safe');
+assert.equal(step({ x: 120, y: 199.5, vx: 0, vy: 1, angle: 0, fuel: 0 }, NOTHING).reward, CRASH_PENALTY);
+obstacles.splice(0, obstacles.length, ...saved);
+
 console.log('All physics tests passed.');
 
 // Buckets: which slot a number falls into.

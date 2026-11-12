@@ -17,6 +17,15 @@ let FUEL_COST = -0.3;     // every frame the engine burns
 const WIDTH = 600, HEIGHT = 400, GROUND = 370;
 const PAD_LEFT = 250, PAD_RIGHT = 350;
 
+// Obstacles: rectangles in the sky (x, y = top-left corner). Touching one is a crash.
+// Players can add, drag and remove them, so this list changes while the game runs.
+const obstacles = [{ x: 380, y: 230, w: 110, h: 18 }];
+
+// Is the point (px, py) inside any obstacle?
+function hitsObstacle(px, py) {
+  return obstacles.some(o => px >= o.x && px <= o.x + o.w && py >= o.y && py <= o.y + o.h);
+}
+
 // The 4 things a pilot can do each frame. You pick with keys now; the AI picks later.
 const NOTHING = 0, ENGINE = 1, TURN_LEFT = 2, TURN_RIGHT = 3;
 
@@ -53,6 +62,9 @@ function step(rocket, action) {
     result = onPad && gentle && upright ? 'landed' : 'crashed';
   } else if (x < 0 || x > WIDTH || y < -100) {
     result = 'crashed'; // flew off the screen
+  } else if (hitsObstacle(x, y) || hitsObstacle(x + Math.sin(angle) * 30, y - Math.cos(angle) * 30)) {
+    // shortcut: only the feet and the nose tip are checked, so a block could clip the rocket's side; fine at these speeds
+    result = 'crashed';
   }
   if (result === 'landed') reward += LAND_REWARD;
   if (result === 'crashed') reward += CRASH_PENALTY;

@@ -54,6 +54,11 @@ function draw() {
   ctx.fillStyle = '#3c3';
   ctx.fillRect(PAD_LEFT, GROUND, PAD_RIGHT - PAD_LEFT, 6);
 
+  // obstacles
+  ctx.fillStyle = '#8a7a66';
+  ctx.strokeStyle = '#c8b89f';
+  for (const o of obstacles) { ctx.fillRect(o.x, o.y, o.w, o.h); ctx.strokeRect(o.x + 0.5, o.y + 0.5, o.w - 1, o.h - 1); }
+
   // rocket: move to its position, tilt it, then draw it pointing up
   ctx.save();
   ctx.translate(rocket.x, rocket.y);
