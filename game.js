@@ -35,6 +35,47 @@ addEventListener('keydown', e => {
 });
 addEventListener('keyup', e => { keys[keyName(e)] = false; });
 
+// Obstacles with the mouse or a finger: click empty sky to add a block,
+// drag a block to move it, double-click a block to remove it.
+const BLOCK_W = 100, BLOCK_H = 18;
+let dragging = null, grabX = 0, grabY = 0; // the block being dragged, and where on it you grabbed
+
+// Mouse position in game pixels (the canvas may be drawn smaller, e.g. on a phone).
+function pointerPos(e) {
+  const box = canvas.getBoundingClientRect();
+  return { x: (e.clientX - box.left) * WIDTH / box.width, y: (e.clientY - box.top) * HEIGHT / box.height };
+}
+const blockAt = p => obstacles.findLast(o => p.x >= o.x && p.x <= o.x + o.w && p.y >= o.y && p.y <= o.y + o.h);
+// Keep a block inside the sky, above the ground.
+function placeBlock(o, x, y) {
+  o.x = Math.max(0, Math.min(WIDTH - o.w, x));
+  o.y = Math.max(0, Math.min(GROUND - o.h, y));
+}
+
+canvas.addEventListener('pointerdown', e => {
+  const p = pointerPos(e);
+  dragging = blockAt(p);
+  if (!dragging) {
+    dragging = { x: 0, y: 0, w: BLOCK_W, h: BLOCK_H };
+    placeBlock(dragging, p.x - BLOCK_W / 2, p.y - BLOCK_H / 2);
+    obstacles.push(dragging);
+  }
+  grabX = p.x - dragging.x;
+  grabY = p.y - dragging.y;
+  canvas.setPointerCapture(e.pointerId); // keep dragging even if the pointer leaves the canvas
+});
+canvas.addEventListener('pointermove', e => {
+  const p = pointerPos(e);
+  if (dragging) placeBlock(dragging, p.x - grabX, p.y - grabY);
+  canvas.style.cursor = dragging ? 'grabbing' : blockAt(p) ? 'grab' : 'crosshair';
+});
+canvas.addEventListener('pointerup', () => { dragging = null; });
+canvas.addEventListener('dblclick', e => {
+  const o = blockAt(pointerPos(e));
+  if (o) obstacles.splice(obstacles.indexOf(o), 1);
+});
+document.getElementById('clearBlocks').onclick = () => { obstacles.length = 0; };
+
 // Turn held keys into ONE action, because the AI will also pick one action per frame.
 // ↑ = engine, A = turn left, D = turn right.
 function actionFromKeys() {

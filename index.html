@@ -7,6 +7,7 @@
   <style>
     body { background: #05070f; color: #ccc; font-family: sans-serif; text-align: center; margin: 16px; }
     canvas { max-width: 100%; border: 1px solid #333; }
+    #world { touch-action: none; } /* on phones, dragging a block shouldn't scroll the page */
     #settings { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 6px 20px; max-width: 600px; margin: 0 auto 12px; text-align: left; }
     #settings label { display: grid; grid-template-columns: 9.5em 1fr 3em; align-items: center; gap: 8px; font-size: 14px; }
     #settings output { font-family: monospace; text-align: right; }
@@ -15,7 +16,8 @@
 <body>
   <h1>Rocket Lander</h1>
   <p>↑ engine · A D turn · R restart. Land gently and upright on the green pad.</p>
-  <p><button id="ai">Let the AI learn</button></p>
+  <p>Obstacles: click the sky to add a block · drag to move · double-click to remove.</p>
+  <p><button id="ai">Let the AI learn</button> <button id="clearBlocks">Clear obstacles</button></p>
   <canvas id="world" width="600" height="400"></canvas>
   <br>
   <canvas id="chart" width="600" height="220" aria-label="Learning curve: average score per 1,000 practice flights"></canvas>
