@@ -8,8 +8,9 @@
     body { background: #05070f; color: #ccc; font-family: sans-serif; text-align: center; margin: 16px; }
     canvas { max-width: 100%; border: 1px solid #333; }
     #world { touch-action: none; } /* on phones, dragging a block shouldn't scroll the page */
-    #settings { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 6px 20px; max-width: 600px; margin: 0 auto 12px; text-align: left; }
+    #settings { display: grid; gap: 6px; max-width: 600px; margin: 0 auto 12px; text-align: left; }
     #settings label { display: grid; grid-template-columns: 9.5em 1fr 3em; align-items: center; gap: 8px; font-size: 14px; }
+    #settings input { min-width: 0; } /* let sliders shrink instead of pushing the numbers out */
     #settings output { font-family: monospace; text-align: right; }
   </style>
 </head>
