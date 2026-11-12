@@ -19,26 +19,28 @@ const aiButton = document.getElementById('ai');
 aiButton.onclick = () => {
   aiFlying = !aiFlying;
   aiButton.textContent = aiFlying ? 'Let me fly' : 'Let the AI learn';
-  aiButton.blur(); // so the arrow keys go to the game, not the button
+  aiButton.blur(); // so the keys go to the game, not the button
   restart();
 };
 
 function restart() { rocket = newRocket(); result = null; score = 0; pauseFrames = 0; }
 
-// Remember which keys are held down.
+// Remember which keys are held down. Letters are stored lowercase so Caps Lock doesn't matter.
 const keys = {};
+const keyName = e => (e.key.length === 1 ? e.key.toLowerCase() : e.key);
 addEventListener('keydown', e => {
-  keys[e.key] = true;
-  if (e.key === 'r') restart();
-  if (e.key.startsWith('Arrow')) e.preventDefault(); // stop the page scrolling
+  keys[keyName(e)] = true;
+  if (keyName(e) === 'r') restart();
+  if (e.key === 'ArrowUp') e.preventDefault(); // stop the page scrolling
 });
-addEventListener('keyup', e => { keys[e.key] = false; });
+addEventListener('keyup', e => { keys[keyName(e)] = false; });
 
 // Turn held keys into ONE action, because the AI will also pick one action per frame.
+// ↑ = engine, A = turn left, D = turn right.
 function actionFromKeys() {
   if (keys.ArrowUp) return ENGINE;
-  if (keys.ArrowLeft) return TURN_LEFT;
-  if (keys.ArrowRight) return TURN_RIGHT;
+  if (keys.a) return TURN_LEFT;
+  if (keys.d) return TURN_RIGHT;
   return NOTHING;
 }
 
