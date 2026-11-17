@@ -76,12 +76,13 @@ canvas.addEventListener('dblclick', e => {
 });
 document.getElementById('clearBlocks').onclick = () => { obstacles.length = 0; };
 
-// Turn held keys into ONE action, because the AI will also pick one action per frame.
-// ↑ = engine, A = turn left, D = turn right.
+// Turn held keys into one action per frame. ↑ = engine, A = turn left, D = turn right.
+// Keys combine: ↑ + A fires the engine while turning left. A + D together cancel out.
 function actionFromKeys() {
-  if (keys.ArrowUp) return ENGINE;
-  if (keys.a) return TURN_LEFT;
-  if (keys.d) return TURN_RIGHT;
+  const left = keys.a && !keys.d, right = keys.d && !keys.a;
+  if (keys.ArrowUp) return left ? ENGINE_LEFT : right ? ENGINE_RIGHT : ENGINE;
+  if (left) return TURN_LEFT;
+  if (right) return TURN_RIGHT;
   return NOTHING;
 }
 
@@ -104,7 +105,7 @@ function draw() {
   ctx.save();
   ctx.translate(rocket.x, rocket.y);
   ctx.rotate(rocket.angle);
-  if (action === ENGINE && rocket.fuel > 0 && !result) {
+  if (firesEngine(action) && rocket.fuel > 0 && !result) {
     ctx.fillStyle = '#f80';
     ctx.beginPath(); ctx.moveTo(-5, 0); ctx.lineTo(5, 0); ctx.lineTo(0, 14 + Math.random() * 6); ctx.fill();
   }

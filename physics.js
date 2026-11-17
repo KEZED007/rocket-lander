@@ -26,8 +26,10 @@ function hitsObstacle(px, py) {
   return obstacles.some(o => px >= o.x && px <= o.x + o.w && py >= o.y && py <= o.y + o.h);
 }
 
-// The 4 things a pilot can do each frame. You pick with keys now; the AI picks later.
-const NOTHING = 0, ENGINE = 1, TURN_LEFT = 2, TURN_RIGHT = 3;
+// The things a pilot can do each frame. The AI uses the first 4; human players also get
+// the two combos, so they can steer while the engine fires.
+const NOTHING = 0, ENGINE = 1, TURN_LEFT = 2, TURN_RIGHT = 3, ENGINE_LEFT = 4, ENGINE_RIGHT = 5;
+const firesEngine = action => action === ENGINE || action === ENGINE_LEFT || action === ENGINE_RIGHT;
 
 // A fresh rocket near the top, at a random spot, drifting a little sideways.
 function newRocket() {
@@ -40,9 +42,9 @@ function step(rocket, action) {
   let { x, y, vx, vy, angle, fuel } = rocket;
   let reward = 0;
 
-  if (action === TURN_LEFT) angle -= TURN_SPEED;
-  if (action === TURN_RIGHT) angle += TURN_SPEED;
-  if (action === ENGINE && fuel > 0) {
+  if (action === TURN_LEFT || action === ENGINE_LEFT) angle -= TURN_SPEED;
+  if (action === TURN_RIGHT || action === ENGINE_RIGHT) angle += TURN_SPEED;
+  if (firesEngine(action) && fuel > 0) {
     // push in the direction the nose points (angle 0 = straight up)
     vx += Math.sin(angle) * THRUST;
     vy -= Math.cos(angle) * THRUST;

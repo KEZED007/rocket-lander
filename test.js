@@ -13,6 +13,13 @@ r = step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0, fuel: 10 }, ENGINE).rocket;
 assert(r.vy < 0, 'engine should push the rocket up');
 assert.equal(r.fuel, 9, 'engine should burn 1 fuel');
 
+// Combos: engine + turn does both in the same frame.
+r = step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0, fuel: 10 }, ENGINE_LEFT).rocket;
+assert(r.angle < 0 && r.fuel === 9 && r.vy < 0, 'engine + left should turn left and thrust');
+r = step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0, fuel: 10 }, ENGINE_RIGHT).rocket;
+assert(r.angle > 0 && r.fuel === 9 && r.vy < 0, 'engine + right should turn right and thrust');
+assert.equal(step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0, fuel: 10 }, ENGINE_LEFT).reward, FUEL_COST, 'combo costs fuel too');
+
 // Empty tank: engine does nothing, gravity wins.
 r = step({ x: 300, y: 100, vx: 0, vy: 0, angle: 0, fuel: 0 }, ENGINE).rocket;
 assert(r.vy > 0, 'no fuel means no thrust');

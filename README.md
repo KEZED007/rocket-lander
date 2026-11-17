@@ -20,7 +20,7 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 Then open http://localhost:8000.
 
-- **Fly it yourself:** ↑ engine, A and D turn, R restart. Land gently and upright on the green pad.
+- **Fly it yourself:** ↑ engine, A and D turn (hold them together with ↑ to steer while thrusting), R restart. Land gently and upright on the green pad.
 - **Obstacles:** click the sky to add a block, drag to move it, double-click to remove it (works with a finger on phones). Hitting a block is a crash. You can rearrange them while the AI is learning.
 - **Let the AI learn:** it practises about 1,200 flights per second in the background. The rocket on screen shows what it has learned so far.
 - **Settings:** sliders change gravity, thrust, fuel, the rewards and how much the AI explores, live. **Reset AI** wipes its memory so you can watch it learn a new world from scratch.
